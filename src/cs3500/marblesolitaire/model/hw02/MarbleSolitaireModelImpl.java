@@ -8,6 +8,8 @@ import java.util.Arrays;
 public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
 
   private final int DEFAULT_ARM = 3;
+  private final int DEFAULT_SROW = 3;
+  private final int DEFAULT_SCOL = 6;
 
   public MarbleSolitaireModelImpl() {
     this.getGameState();
@@ -82,6 +84,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
         }
       }
     }
+    board[DEFAULT_SROW][DEFAULT_SCOL] = 2;
     return board;
   }
 
