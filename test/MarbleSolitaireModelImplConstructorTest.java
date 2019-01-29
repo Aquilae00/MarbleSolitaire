@@ -1,15 +1,11 @@
 import org.junit.Test;
-
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
-
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel;
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl;
 
-public class MarbleSolitaireModelImplTest {
+public class MarbleSolitaireModelImplConstructorTest {
   MarbleSolitaireModel m0 = new MarbleSolitaireModelImpl();
-  MarbleSolitaireModel m1 = new MarbleSolitaireModelImpl(3,3);
+  MarbleSolitaireModel m1 = new MarbleSolitaireModelImpl(3,6);
   MarbleSolitaireModel m2 = new MarbleSolitaireModelImpl(5);
   MarbleSolitaireModel m3 = new MarbleSolitaireModelImpl(3,3,6);
 
