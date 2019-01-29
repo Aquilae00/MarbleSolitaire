@@ -7,25 +7,73 @@ import java.util.Arrays;
  */
 public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
 
-  private final int DEFAULT_ARM = 3;
-  private final int DEFAULT_SROW = 3;
-  private final int DEFAULT_SCOL = 6;
+  private int arm, srow, scol;
+
+
+  private static final int DEFAULT_ARM = 3;
+  private static final int DEFAULT_SROW = 3;
+  private static final int DEFAULT_SCOL = 6;
 
   public MarbleSolitaireModelImpl() {
+    this.arm = DEFAULT_ARM;
+    this.srow = DEFAULT_SROW;
+    this.scol = DEFAULT_SCOL;
     this.getGameState();
   }
 
   public MarbleSolitaireModelImpl(int sRow, int sCol) {
+    this.arm = DEFAULT_ARM;
+    int h_gap = this.arm - 1;
+    int front_gap = h_gap * 2;
+    int width = front_gap * 2 + h_gap + this.arm;
 
+    int v_gap = this.arm - 1;
+    int height = v_gap * 2 + this.arm;
+
+    if (sRow >= height
+            || sCol < front_gap && sRow < v_gap
+            || sCol < front_gap && sRow >= height - v_gap
+            || sCol >= width - front_gap && sRow < v_gap
+            || sCol >= width - front_gap && sRow >= height - v_gap) {
+      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)", sRow, sCol));
+    }
+    this.srow = sRow;
+    this.scol = sCol;
+    this.getGameState();
   }
 
   public MarbleSolitaireModelImpl(int thicc) {
-
+    if (thicc % 2 == 0) {
+      throw new IllegalArgumentException("Enter Odd Arm Thickness");
+    }
+    this.arm = thicc;
+    this.srow = this.arm - 1 + this.arm / 2;
+    this.scol = (this.arm - 1) * 2 + (this.arm - 1) / 2 + this.arm / 2;
+    this.getGameState();
   }
 
   public MarbleSolitaireModelImpl(int thicc, int row, int col) {
+    this.arm = thicc;
+    int h_gap = this.arm - 1;
+    int front_gap = h_gap * 2;
+    int width = front_gap * 2 + h_gap + this.arm;
 
+    int v_gap = this.arm - 1;
+    int height = v_gap * 2 + this.arm;
+
+    if (row >= height
+            || col < front_gap && row < v_gap
+            || col < front_gap && row >= height - v_gap
+            || col >= width - front_gap && row < v_gap
+            || col >= width - front_gap && row >= height - v_gap
+            || thicc % 2 == 0) {
+      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)", row, col));
+    }
+    this.srow = row;
+    this.scol = col;
+    this.getGameState();
   }
+
   @Override
   public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
 
@@ -39,52 +87,48 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
   /**
    * Initialize the board in the form of int arrays.
    * <table>
-   *   <thead>
-   *     <td>Number</td>
-   *     <td>String</td>
-   *   </thead>
-   *   <tr><td>0</td><td>Represents " "</td></tr>
-   *   <tr><td>1</td><td>Represents "O"</td></tr>
-   *   <tr><td>2</td><td>Represents "_"</td></tr>
-   *   <tr><td>3</td><td>Represents "" (Nothing)</td></tr>
+   * <thead>
+   * <td>Number</td>
+   * <td>String</td>
+   * </thead>
+   * <tr><td>0</td><td>Represents " "</td></tr>
+   * <tr><td>1</td><td>Represents "O"</td></tr>
+   * <tr><td>2</td><td>Represents "_"</td></tr>
+   * <tr><td>3</td><td>Represents "" (Nothing)</td></tr>
    * </table>
    *
    * @return the board in form of int arrays
    */
   public int[][] initBoard() {
-    int h_gap = DEFAULT_ARM - 1;
+    int h_gap = this.arm - 1;
     int front_gap = h_gap * 2;
-    int width = front_gap * 2 + h_gap + DEFAULT_ARM;
+    int width = front_gap * 2 + h_gap + this.arm;
     int last_slot = width - front_gap;
 
-    int v_gap = DEFAULT_ARM - 1;
-    int height = v_gap * 2 + DEFAULT_ARM;
+    int v_gap = this.arm - 1;
+    int height = v_gap * 2 + this.arm;
     int[][] board = new int[height][width];
 
-    for (int x = 0; x < width ; ++x) {
+    for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         if (y < v_gap || y >= height - v_gap) {
           if ((x >= front_gap) && (x % 2 == 0) && x < last_slot) {
             board[y][x] = 1;
-          }
-          else if((x >= front_gap) && !(x % 2 == 0) && x < last_slot) {
+          } else if ((x >= front_gap) && !(x % 2 == 0) && x < last_slot) {
             board[y][x] = 0;
-          }
-          else if (x >= last_slot) {
+          } else if (x >= last_slot) {
             board[y][x] = 3;
           }
-        }
-         else  {
-           if (x % 2 == 0) {
-             board[y][x] = 1;
-           }
-           else {
-             board[y][x] = 0;
-           }
+        } else {
+          if (x % 2 == 0) {
+            board[y][x] = 1;
+          } else {
+            board[y][x] = 0;
+          }
         }
       }
     }
-    board[DEFAULT_SROW][DEFAULT_SCOL] = 2;
+    board[this.srow][this.scol] = 2;
     return board;
   }
 
@@ -94,14 +138,14 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     StringBuilder string_board = new StringBuilder();
     for (int[] iArray : init_board) {
       for (int i : iArray) {
-        switch(i) {
-          case 0 :
+        switch (i) {
+          case 0:
             string_board.append(" ");
             break;
-          case 1 :
+          case 1:
             string_board.append("O");
             break;
-          case 2 :
+          case 2:
             string_board.append("_");
             break;
 
@@ -116,5 +160,4 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
   public int getScore() {
     return 0;
   }
-
 }
