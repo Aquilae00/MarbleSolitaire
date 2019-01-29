@@ -6,10 +6,8 @@ import java.util.Arrays;
  * Class implementation of MarbleSolitaireModel
  */
 public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
-
+  private int[][] board_state;
   private int arm, srow, scol;
-
-
   private static final int DEFAULT_ARM = 3;
   private static final int DEFAULT_SROW = 3;
   private static final int DEFAULT_SCOL = 6;
@@ -18,6 +16,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     this.arm = DEFAULT_ARM;
     this.srow = DEFAULT_SROW;
     this.scol = DEFAULT_SCOL;
+    this.board_state = initBoard();
     this.getGameState();
   }
 
@@ -39,6 +38,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     }
     this.srow = sRow;
     this.scol = sCol;
+    this.board_state = initBoard();
     this.getGameState();
   }
 
@@ -49,6 +49,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     this.arm = thicc;
     this.srow = this.arm - 1 + this.arm / 2;
     this.scol = (this.arm - 1) * 2 + (this.arm - 1) / 2 + this.arm / 2;
+    this.board_state = initBoard();
     this.getGameState();
   }
 
@@ -71,12 +72,27 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     }
     this.srow = row;
     this.scol = col;
+    this.board_state = initBoard();
     this.getGameState();
   }
 
   @Override
   public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
+    int h_gap = this.arm - 1;
+    int front_gap = h_gap * 2;
+    int width = front_gap * 2 + h_gap + this.arm;
 
+    int v_gap = this.arm - 1;
+    int height = v_gap * 2 + this.arm;
+
+    if (toRow >= height
+            || toCol < front_gap && toRow < v_gap
+            || toCol < front_gap && toRow >= height - v_gap
+            || toCol >= width - front_gap && toRow < v_gap
+            || toCol >= width - front_gap && toRow >= height - v_gap) {
+      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)", toRow, toCol));
+    }
+    this.board_state[fromRow][fromCol] = 0;
   }
 
   @Override
@@ -134,9 +150,8 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
 
   @Override
   public String getGameState() {
-    int[][] init_board = this.initBoard();
     StringBuilder string_board = new StringBuilder();
-    for (int[] iArray : init_board) {
+    for (int[] iArray : this.board_state) {
       for (int i : iArray) {
         switch (i) {
           case 0:
