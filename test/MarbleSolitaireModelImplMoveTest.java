@@ -20,8 +20,13 @@ public class MarbleSolitaireModelImplMoveTest {
 
   @Test
   public void testMarbleSolitaireModelImplMove2() {
+    System.out.println(m0.getScore());
     m0.move(3,2,3,6);
     System.out.println(m0.getGameState());
+    System.out.println(m0.getScore());
+    m0.move(3,8,3,4);
+    System.out.println(m0.getGameState());
+    System.out.println(m0.getScore());
   }
   @Test
   public void testMarbleSolitaireModelImplMove3() {

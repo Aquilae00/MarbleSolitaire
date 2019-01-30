@@ -8,11 +8,13 @@ public class MarbleSolitaireModelImplConstructorTest {
   MarbleSolitaireModel m1 = new MarbleSolitaireModelImpl(3,6);
   MarbleSolitaireModel m2 = new MarbleSolitaireModelImpl(5);
   MarbleSolitaireModel m3 = new MarbleSolitaireModelImpl(3,3,6);
+  MarbleSolitaireModel m4 = new MarbleSolitaireModelImpl(0,2);
 
 
   @Test
   public void testMarbleSolitaireModelImplConstructor1() {
     assertEquals(m0.getGameState(),m0.getGameState());
+    System.out.println(m0.getGameState());
   }
 
   @Test
@@ -59,4 +61,9 @@ public class MarbleSolitaireModelImplConstructorTest {
   public void testMarbleSolitaireModelImplConstructor10() {
     assertEquals(new IllegalArgumentException(), new MarbleSolitaireModelImpl(4,3,3));
   }
+
+//  @Test
+//  public void testMarbleSolitaireModelImplConstructor11() {
+//    assertEquals(m4.getGameState(), m4.getGameState());
+//  }
 }
