@@ -22,14 +22,13 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
   /**
    * Initialize values of front_gap, width, last_slot, v_gap, and height.
    */
-  public void init() {
+  private void init() {
     front_gap = this.arm - 1;
     width = front_gap * 2 + this.arm;
     last_slot = width - front_gap;
 
     v_gap = this.arm - 1;
     height = v_gap * 2 + this.arm;
-
   }
 
   /**
@@ -51,12 +50,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    * Constructs a Marble Solitaire Model using default values.
    */
   public MarbleSolitaireModelImpl() {
-    this.arm = DEFAULT_ARM;
-    this.srow = DEFAULT_SROW;
-    this.scol = DEFAULT_SCOL;
-    this.init();
-    this.board_state = initBoard();
-    this.getGameState();
+    this(DEFAULT_ARM, DEFAULT_SROW, DEFAULT_SCOL);
   }
 
   /**
@@ -68,22 +62,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    * @throws IllegalArgumentException if position is invalid
    */
   public MarbleSolitaireModelImpl(int sRow, int sCol) {
-    this.arm = DEFAULT_ARM;
-    this.init();
-    this.board_state = initBoard();
-    if (sRow >= height
-            || sCol < front_gap && sRow < v_gap
-            || sCol < front_gap && sRow >= height - v_gap
-            || sCol >= width - front_gap && sRow < v_gap
-            || sCol >= width - front_gap && sRow >= height - v_gap
-            || this.board_state[sRow][sCol] == Coding.Invalid) {
-      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
-              sRow, sCol));
-    }
-    this.srow = sRow;
-    this.scol = sCol;
-    this.board_state = initBoard();
-    this.getGameState();
+    this(DEFAULT_ARM, sRow, sCol);
   }
 
   /**
@@ -94,15 +73,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    * @throws IllegalArgumentException if the arm thickness is not a positive odd number
    */
   public MarbleSolitaireModelImpl(int thicc) {
-    if (thicc % 2 == 0) {
-      throw new IllegalArgumentException("Enter Odd Arm Thickness");
-    }
-    this.arm = thicc;
-    this.init();
-    this.srow = this.arm - 1 + this.arm / 2;
-    this.scol = this.arm + this.arm / 2 - 1;
-    this.board_state = initBoard();
-    this.getGameState();
+    this(thicc, DEFAULT_SROW, DEFAULT_SCOL);
   }
 
   /**
@@ -119,40 +90,38 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     if (thicc < 0
             || thicc % 2 == 0
             || row < 0
-            || col < 0
-            || col < 0
-            || row < 0) {
+            || col < 0) {
       throw new IllegalArgumentException("Invalid Input");
     }
 
     this.arm = thicc;
     this.init();
-    this.scol = DEFAULT_SCOL;
-    this.srow = DEFAULT_SROW;
-    this.board_state = initBoard();
 
-    if (row >= this.height
-            || col < front_gap && row < v_gap
-            || col < front_gap && row >= height - v_gap
-            || col >= width - front_gap && row < v_gap
-            || col >= width - front_gap && row >= height - v_gap
+    if (row == DEFAULT_SROW && col == DEFAULT_SCOL) {
+      this.scol = this.arm + this.arm / 2 - 1;
+      this.srow = this.arm - 1 + this.arm / 2;
 
-            || this.board_state[row][col] == Coding.Invalid) {
-      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
-              row, col));
+    } else {
+      this.srow = row;
+      this.scol = col;
+
     }
-    this.srow = row;
-    this.scol = col;
+
+    if (srow >= this.height
+            || scol < front_gap && srow < v_gap
+            || scol < front_gap && srow >= height - v_gap
+            || scol >= width - front_gap && srow < v_gap
+            || scol >= width - front_gap && srow >= height - v_gap) {
+      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
+              srow, scol));
+    }
+
     this.board_state = initBoard();
     this.getGameState();
   }
 
-  @Override
-  public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
-    int jumped_over_v = (toCol + fromCol) / 2;
-    int jumped_over_h = (toRow + fromRow) / 2;
-
-    if (toRow >= height
+  private boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
+    return toRow >= height
             || toRow < 0
             || toCol < 0
             || fromCol < 0
@@ -169,8 +138,23 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
             || Math.abs(toRow - fromRow) != 2 && Math.abs(toRow - fromRow) != 0
-            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0
-    ) {
+            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0;
+  }
+
+  private boolean isInvalidPos(int row, int col) {
+    this.init();
+    return col < front_gap && row < v_gap
+            || col < front_gap && row >= height - v_gap
+            || col >= width - front_gap && row < v_gap
+            || col >= width - front_gap && row >= height - v_gap;
+  }
+
+  @Override
+  public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
+    int jumped_over_v = (toCol + fromCol) / 2;
+    int jumped_over_h = (toRow + fromRow) / 2;
+
+    if (isInvalidMove(fromRow, fromCol, toRow, toCol)) {
       throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
               toRow, toCol));
     }
@@ -190,81 +174,100 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     }
   }
 
-  @Override
+//  @Override
+//  public boolean isGameOver() {
+//    ArrayList<Integer> arr = new ArrayList<>();
+//    for (int x = 0; x < width; ++x) {
+//      for (int y = 0; y < height; ++y) {
+//        if (this.board_state[x][y] == Coding.Marbles) {
+//          if (x < v_gap || x >= height - v_gap) {
+//            if (x != height - 1 && y != last_slot - 1) {
+//              if (this.board_state[x + 1][y] == Coding.Invalid
+//                      && this.board_state[x][y + 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else if (y == last_slot - 1 && x != height - 1) {
+//              if (this.board_state[x + 1][y] == Coding.Invalid
+//                      && this.board_state[x][y - 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else if (x == height - 1 && y != last_slot) {
+//              if (this.board_state[x - 1][y] == Coding.Invalid
+//                      && this.board_state[x][y + 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else {
+//              if (this.board_state[x - 1][y] == Coding.Invalid
+//                      && this.board_state[x][y - 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            }
+//          } else {
+//            if (y == 0 && y < front_gap && x == v_gap) {
+//              if (this.board_state[x + 1][y] == Coding.Invalid
+//                      && this.board_state[x][y + 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else if (y == 0 && y < front_gap && x > v_gap) {
+//              if (this.board_state[x - 1][y] == Coding.Invalid
+//                      && this.board_state[x][y + 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else if (y == width - 1 && y > last_slot - 1 && x == v_gap) {
+//              if (this.board_state[x + 1][y] == Coding.Invalid
+//                      && this.board_state[x][y - 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else if (y == width - 1 && y > last_slot - 1 && x > v_gap) {
+//              if (this.board_state[x - 1][y] == Coding.Invalid
+//                      && this.board_state[x][y - 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            } else {
+//              if (this.board_state[x - 1][y] == Coding.Invalid
+//                      && this.board_state[x][y - 1] == Coding.Invalid
+//                      && this.board_state[x + 1][y] == Coding.Invalid
+//                      && this.board_state[x][y + 1] == Coding.Invalid) {
+//                arr.add(1);
+//              } else {
+//                arr.add(0);
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+//    return !arr.contains(0);
+//  }
+
   public boolean isGameOver() {
     ArrayList<Integer> arr = new ArrayList<>();
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         if (this.board_state[x][y] == Coding.Marbles) {
-          if (x < v_gap || x >= height - v_gap) {
-            if (x != height - 1 && y != last_slot - 1) {
-              if (this.board_state[x + 1][y] == Coding.Invalid
-                      && this.board_state[x][y + 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else if (y == last_slot - 1 && x != height - 1) {
-              if (this.board_state[x + 1][y] == Coding.Invalid
-                      && this.board_state[x][y - 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else if (x == height - 1 && y != last_slot) {
-              if (this.board_state[x - 1][y] == Coding.Invalid
-                      && this.board_state[x][y + 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else {
-              if (this.board_state[x - 1][y] == Coding.Invalid
-                      && this.board_state[x][y - 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            }
+          if (isInvalidMove(x, y, x + 2, y)
+                  || isInvalidMove(x, y, x - 2, y)
+                  || isInvalidMove(x, y, x, y + 2)
+                  || isInvalidMove(x, y, x, y - 2)) {
+            arr.add(0);
           } else {
-            if (y == 0 && y < front_gap && x == v_gap) {
-              if (this.board_state[x + 1][y] == Coding.Invalid
-                      && this.board_state[x][y + 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else if (y == 0 && y < front_gap && x > v_gap) {
-              if (this.board_state[x - 1][y] == Coding.Invalid
-                      && this.board_state[x][y + 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else if (y == width - 1 && y > last_slot - 1 && x == v_gap) {
-              if (this.board_state[x + 1][y] == Coding.Invalid
-                      && this.board_state[x][y - 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else if (y == width - 1 && y > last_slot - 1 && x > v_gap) {
-              if (this.board_state[x - 1][y] == Coding.Invalid
-                      && this.board_state[x][y - 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            } else {
-              if (this.board_state[x - 1][y] == Coding.Invalid
-                      && this.board_state[x][y - 1] == Coding.Invalid
-                      && this.board_state[x + 1][y] == Coding.Invalid
-                      && this.board_state[x][y + 1] == Coding.Invalid) {
-                arr.add(1);
-              } else {
-                arr.add(0);
-              }
-            }
+            arr.add(1);
           }
         }
       }
@@ -287,7 +290,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    *
    * @return the board in form of int arrays
    */
-  public Coding[][] initBoard() {
+  private Coding[][] initBoard() {
     Coding[][] board = new Coding[height][width];
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
@@ -381,7 +384,7 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    *
    * @return An Empty Board
    */
-  public Coding[][] initBoardEmpty() {
+  private Coding[][] initBoardEmpty() {
     Coding[][] board = new Coding[height][width];
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
