@@ -37,50 +37,45 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
     }
   }
 
-//  private void movement(int num1, int num2, int num3, int num4, MarbleSolitaireModel model) {
-//    try {
-//      model.move(num1, num2, num3, num4);
-//    } catch (IllegalArgumentException a) {
-//      this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
-//      scan.next();
-//    }
-//  }
   @Override
   public void playGame(MarbleSolitaireModel model) throws IOException {
     if (model == null) {
       throw new IllegalArgumentException("Model can't be null");
     }
-    int num1, num2, num3, num4;
-    String scan1, scan2, scan3, scan4;
+    int[] arr = new int[4];
+    String scan1;
     Scanner scan = new Scanner(this.rd);
     this.ap.append(model.getGameState() + "\n");
     this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
     if (!model.isGameOver()) {
-      scan1 = scan.next();
-      scan2 = scan.next();
-      scan3 = scan.next();
-      scan4 = scan.next();
-
-      if (scan1.equals("q") || scan1.equals("Q")
-              || scan2.equals("q") || scan2.equals("Q")
-              || scan3.equals("q") || scan3.equals("Q")
-              || scan4.equals("q") || scan4.equals("Q")) {
-        outputCondition(Output.Over,model);
-      } else {
-        num1 = Integer.parseInt(scan1);
-        num2 = Integer.parseInt(scan2);
-        num3 = Integer.parseInt(scan3);
-        num4 = Integer.parseInt(scan4);
-        try {
-          model.move(num1, num2, num3, num4);
-        } catch (IllegalArgumentException a) {
-          this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
-          this.playGame(model);
+      for (int i = 0; i < arr.length; i++) {
+        scan1 = scan.next();
+        if (scan1.equals("Q") || scan1.equals("q")) {
+          outputCondition(Output.Over, model);
+          System.exit(0);
         }
+        try {
+          if (Integer.parseInt(scan1) < 0) {
+            throw new IllegalArgumentException();
+          }
+          arr[i] = Integer.parseInt(scan1);
+        } catch (NumberFormatException n) {
+          this.ap.append("Invalid input. Enter a new input \n");
+          arr[i] = Integer.parseInt(scan.next());
+        } catch (IllegalArgumentException e) {
+          this.ap.append("Invalid input. Enter a new input \n");
+          arr[i] = Integer.parseInt(scan.next());
+        }
+      }
+      try {
+        model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
+      } catch (IllegalArgumentException a) {
+        this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
         this.playGame(model);
       }
+      this.playGame(model);
     } else {
-      outputCondition(Output.Over,model);
+      outputCondition(Output.Over, model);
     }
   }
 }
