@@ -2,6 +2,7 @@ package cs3500.marblesolitaire.controller;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.imageio.IIOException;
@@ -16,8 +17,8 @@ TODO:
 3. Throw catch for Readable and Appendable
  */
 public class MarbleSolitaireControllerImpl implements MarbleSolitaireController {
-  final Readable rd;
-  final Appendable ap;
+  private final Readable rd;
+  private final Appendable ap;
 
   public MarbleSolitaireControllerImpl(Readable rd, Appendable ap) {
     if (rd == null || ap == null) {
@@ -113,6 +114,9 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
         outputCondition(Output.Over, model);
       }
     } catch (IOException e) {
+      throw new IllegalStateException();
+    }
+    catch (NoSuchElementException e) {
       throw new IllegalStateException();
     }
   }
