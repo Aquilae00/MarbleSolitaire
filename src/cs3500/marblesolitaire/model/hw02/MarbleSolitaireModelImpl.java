@@ -141,14 +141,6 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
             || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0;
   }
 
-  private boolean isInvalidPos(int row, int col) {
-    this.init();
-    return col < front_gap && row < v_gap
-            || col < front_gap && row >= height - v_gap
-            || col >= width - front_gap && row < v_gap
-            || col >= width - front_gap && row >= height - v_gap;
-  }
-
   @Override
   public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
     int jumped_over_v = (toCol + fromCol) / 2;
@@ -174,107 +166,28 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
     }
   }
 
-//  @Override
-//  public boolean isGameOver() {
-//    ArrayList<Integer> arr = new ArrayList<>();
-//    for (int x = 0; x < width; ++x) {
-//      for (int y = 0; y < height; ++y) {
-//        if (this.board_state[x][y] == Coding.Marbles) {
-//          if (x < v_gap || x >= height - v_gap) {
-//            if (x != height - 1 && y != last_slot - 1) {
-//              if (this.board_state[x + 1][y] == Coding.Invalid
-//                      && this.board_state[x][y + 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else if (y == last_slot - 1 && x != height - 1) {
-//              if (this.board_state[x + 1][y] == Coding.Invalid
-//                      && this.board_state[x][y - 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else if (x == height - 1 && y != last_slot) {
-//              if (this.board_state[x - 1][y] == Coding.Invalid
-//                      && this.board_state[x][y + 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else {
-//              if (this.board_state[x - 1][y] == Coding.Invalid
-//                      && this.board_state[x][y - 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            }
-//          } else {
-//            if (y == 0 && y < front_gap && x == v_gap) {
-//              if (this.board_state[x + 1][y] == Coding.Invalid
-//                      && this.board_state[x][y + 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else if (y == 0 && y < front_gap && x > v_gap) {
-//              if (this.board_state[x - 1][y] == Coding.Invalid
-//                      && this.board_state[x][y + 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else if (y == width - 1 && y > last_slot - 1 && x == v_gap) {
-//              if (this.board_state[x + 1][y] == Coding.Invalid
-//                      && this.board_state[x][y - 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else if (y == width - 1 && y > last_slot - 1 && x > v_gap) {
-//              if (this.board_state[x - 1][y] == Coding.Invalid
-//                      && this.board_state[x][y - 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            } else {
-//              if (this.board_state[x - 1][y] == Coding.Invalid
-//                      && this.board_state[x][y - 1] == Coding.Invalid
-//                      && this.board_state[x + 1][y] == Coding.Invalid
-//                      && this.board_state[x][y + 1] == Coding.Invalid) {
-//                arr.add(1);
-//              } else {
-//                arr.add(0);
-//              }
-//            }
-//          }
-//        }
-//      }
-//    }
-//    return !arr.contains(0);
-//  }
-
   public boolean isGameOver() {
-    ArrayList<Integer> arr = new ArrayList<>();
-    for (int x = 0; x < width; ++x) {
-      for (int y = 0; y < height; ++y) {
-        if (this.board_state[x][y] == Coding.Marbles) {
-          if (isInvalidMove(x, y, x + 2, y)
-                  || isInvalidMove(x, y, x - 2, y)
-                  || isInvalidMove(x, y, x, y + 2)
-                  || isInvalidMove(x, y, x, y - 2)) {
-            arr.add(0);
-          } else {
-            arr.add(1);
-          }
+    boolean condition = true;
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        if (board_state[x][y] == Coding.Marbles) {
+          condition = condition && !(x < last_slot
+                  && board_state[x + 2][y] == Coding.Empty
+                  && board_state[x + 1][y] == Coding.Marbles);
+          condition = condition && !(x > 1
+                  && board_state[x - 2][y] == Coding.Empty
+                  && board_state[x - 1][y] == Coding.Marbles);
+          condition = condition && !(y < last_slot
+                  && board_state[x][y + 2] == Coding.Empty
+                  && board_state[x][y + 1] == Coding.Marbles);
+          condition = condition && !(y > 1
+                  && board_state[x][y - 2] == Coding.Empty
+                  && board_state[x][y - 1] == Coding.Marbles);
         }
       }
     }
-    return !arr.contains(0);
+    return condition;
   }
-
   /**
    * Initialize the board in the form of int arrays.
    * <table>

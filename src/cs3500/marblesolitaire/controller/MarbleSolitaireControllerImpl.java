@@ -31,13 +31,18 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
   private void outputCondition(Output o, MarbleSolitaireModel model) {
     try {
       switch (o) {
-        case Over:
+        case Quit:
           this.ap.append("Game quit!" + "\n");
           this.ap.append("State of game when quit:" + "\n");
           this.ap.append(model.getGameState() + "\n");
           this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
           break;
-        default:
+        case Over:
+          this.ap.append("Game over!\n");
+          this.ap.append(model.getGameState() + "\n");
+          this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
+          break;
+        default :
       }
     }
     catch (IOException e){
@@ -79,17 +84,16 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       int[] arr = new int[4];
       String scan1;
       Scanner scan = new Scanner(this.rd);
-      boolean game_over = model.isGameOver();
-      while (!game_over) {
+      while (!model.isGameOver()) {
         this.ap.append(model.getGameState() + "\n");
         this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-        while (!game_over) {
+        if (!model.isGameOver()) {
           for (int i = 0; i < arr.length; i++) {
             boolean done = false;
             while (!done) {
               scan1 = scan.next();
               if (scan1.equals("Q") || scan1.equals("q")) {
-                outputCondition(Output.Over, model);
+                outputCondition(Output.Quit, model);
                 return;
               } else {
                 try {
@@ -106,13 +110,12 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
               }
             }
           }
-          try {
-            model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
-          } catch (IllegalArgumentException a) {
-            this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
-          }
         }
-
+        try {
+          model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
+        } catch (IllegalArgumentException a) {
+          this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
+        }
       }
         outputCondition(Output.Over, model);
 
