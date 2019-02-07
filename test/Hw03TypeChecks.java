@@ -13,7 +13,7 @@ public class Hw03TypeChecks {
    * The contents of this method are meaningless.
    * They are only here to ensure that your code compiles properly.
    */
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     Readable rd = null;
     Appendable ap = null;
     helper(new cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl(),
@@ -24,7 +24,7 @@ public class Hw03TypeChecks {
 
   private static void helper(
            cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel model,
-           cs3500.marblesolitaire.controller.MarbleSolitaireController controller) throws IOException {
+           cs3500.marblesolitaire.controller.MarbleSolitaireController controller) {
     controller.playGame(model);
   }
 

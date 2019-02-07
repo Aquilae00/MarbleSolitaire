@@ -15,5 +15,5 @@ public interface MarbleSolitaireController {
    * @param model an object of MarbleSolitaireModel
    * @throws IOException
    */
-  void playGame(MarbleSolitaireModel model) throws IOException;
+  void playGame(MarbleSolitaireModel model);
 }

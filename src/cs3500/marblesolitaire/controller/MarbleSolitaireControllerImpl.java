@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Scanner;
 
+import javax.imageio.IIOException;
+
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel;
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl;
 
@@ -25,67 +27,99 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
     this.ap = ap;
   }
 
-  private void outputCondition(Output o, MarbleSolitaireModel model) throws IOException {
-    switch (o) {
-      case Over:
-        this.ap.append("Game quit!" + "\n");
-        this.ap.append("State of the game when quit:" + "\n");
-        this.ap.append(model.getGameState() + "\n");
-        this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-        break;
-      default:
+  private void outputCondition(Output o, MarbleSolitaireModel model) {
+    try {
+      switch (o) {
+        case Over:
+          this.ap.append("Game quit!" + "\n");
+          this.ap.append("State of the game when quit:" + "\n");
+          this.ap.append(model.getGameState() + "\n");
+          this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
+          break;
+        default:
+      }
+    }
+    catch (IOException e){
+      throw new IllegalStateException();
     }
   }
 
+//  private void inputCheck(int[] arr, int ind,MarbleSolitaireModel model) throws IOException {
+//    Scanner scan = new Scanner(this.rd);
+//    String scan1;
+//    boolean done = false;
+//    while (!done) {
+//      scan1 = scan.next();
+//      if (scan1.equals("Q") || scan1.equals("q")) {
+//        outputCondition(Output.Over, model);
+//        return;
+//      }
+//      try {
+//        if (Integer.parseInt(scan1) < 0) {
+//          throw new IllegalArgumentException();
+//        }
+//        arr[ind] = Integer.parseInt(scan1);
+//        done = true;
+//      } catch (NumberFormatException n) {
+//        this.ap.append("Invalid input. Enter a new input \n");
+//
+//      } catch (IllegalArgumentException e) {
+//        this.ap.append("Invalid input. Enter a new input \n");
+//
+//      }
+//    }
+//  }
   @Override
-  public void playGame(MarbleSolitaireModel model) throws IOException {
-    if (model == null) {
-      throw new IllegalArgumentException("Model can't be null");
-    }
-    int[] arr = new int[4];
-    String scan1;
-    Scanner scan = new Scanner(this.rd);
-    this.ap.append(model.getGameState() + "\n");
-    this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-    if (!model.isGameOver()) {
-      for (int i = 0; i < arr.length; i++) {
-        scan1 = scan.next();
-        if (scan1.equals("Q") || scan1.equals("q")) {
-          outputCondition(Output.Over, model);
-          System.exit(0);
+  public void playGame(MarbleSolitaireModel model) {
+    try {
+      if (model == null) {
+        throw new IllegalArgumentException("Model can't be null");
+      }
+      int[] arr = new int[4];
+      String scan1;
+      Scanner scan = new Scanner(this.rd);
+      this.ap.append(model.getGameState() + "\n");
+      this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
+      if (!model.isGameOver()) {
+        for (int i = 0; i < arr.length; i++) {
+          boolean done = false;
+          while (!done) {
+            scan1 = scan.next();
+            if (scan1.equals("Q") || scan1.equals("q")) {
+              outputCondition(Output.Over, model);
+              return;
+            }
+            try {
+              if (Integer.parseInt(scan1) < 0) {
+                throw new IllegalArgumentException();
+              }
+              arr[i] = Integer.parseInt(scan1);
+              done = true;
+            } catch (NumberFormatException n) {
+              this.ap.append("Invalid input. Enter a new input \n");
+            } catch (IllegalArgumentException e) {
+              this.ap.append("Invalid input. Enter a new input \n");
+            }
+          }
         }
         try {
-          if (Integer.parseInt(scan1) < 0) {
-            throw new IllegalArgumentException();
-          }
-          arr[i] = Integer.parseInt(scan1);
-        } catch (NumberFormatException n) {
-          this.ap.append("Invalid input. Enter a new input \n");
-          arr[i] = Integer.parseInt(scan.next());
-        } catch (IllegalArgumentException e) {
-          this.ap.append("Invalid input. Enter a new input \n");
-          arr[i] = Integer.parseInt(scan.next());
+          model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
+        } catch (IllegalArgumentException a) {
+          this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
+          this.playGame(model);
         }
-      }
-      try {
-        model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
-      } catch (IllegalArgumentException a) {
-        this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
         this.playGame(model);
+      } else {
+        outputCondition(Output.Over, model);
       }
-      this.playGame(model);
-    } else {
-      outputCondition(Output.Over, model);
+    } catch (IOException e) {
+      throw new IllegalStateException();
     }
   }
 }
 
 class test {
   public static void main(String[] args) {
-    try {
       new MarbleSolitaireControllerImpl(new InputStreamReader(System.in), System.out).playGame(new MarbleSolitaireModelImpl());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 }
