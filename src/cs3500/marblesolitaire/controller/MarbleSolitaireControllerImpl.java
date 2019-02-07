@@ -20,7 +20,7 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
   private final Readable rd;
   private final Appendable ap;
 
-  public MarbleSolitaireControllerImpl(Readable rd, Appendable ap) {
+  public MarbleSolitaireControllerImpl(Readable rd, Appendable ap) throws IllegalArgumentException {
     if (rd == null || ap == null) {
       throw new IllegalArgumentException("Constructor Error");
     }
@@ -33,7 +33,7 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       switch (o) {
         case Over:
           this.ap.append("Game quit!" + "\n");
-          this.ap.append("State of the game when quit:" + "\n");
+          this.ap.append("State of game when quit:" + "\n");
           this.ap.append(model.getGameState() + "\n");
           this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
           break;
@@ -79,40 +79,43 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       int[] arr = new int[4];
       String scan1;
       Scanner scan = new Scanner(this.rd);
-      this.ap.append(model.getGameState() + "\n");
-      this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-      if (!model.isGameOver()) {
-        for (int i = 0; i < arr.length; i++) {
-          boolean done = false;
-          while (!done) {
-            scan1 = scan.next();
-            if (scan1.equals("Q") || scan1.equals("q")) {
-              outputCondition(Output.Over, model);
-              return;
-            }
-            try {
-              if (Integer.parseInt(scan1) < 0) {
-                throw new IllegalArgumentException();
+      boolean game_over = model.isGameOver();
+      while (!game_over) {
+        this.ap.append(model.getGameState() + "\n");
+        this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
+        while (!game_over) {
+          for (int i = 0; i < arr.length; i++) {
+            boolean done = false;
+            while (!done) {
+              scan1 = scan.next();
+              if (scan1.equals("Q") || scan1.equals("q")) {
+                outputCondition(Output.Over, model);
+                return;
+              } else {
+                try {
+                  if (Integer.parseInt(scan1) < 0) {
+                    throw new IllegalArgumentException();
+                  }
+                  arr[i] = Integer.parseInt(scan1);
+                  done = true;
+                } catch (NumberFormatException n) {
+                  this.ap.append("Invalid input. Enter a new input \n");
+                } catch (IllegalArgumentException e) {
+                  this.ap.append("Invalid input. Enter a new input \n");
+                }
               }
-              arr[i] = Integer.parseInt(scan1);
-              done = true;
-            } catch (NumberFormatException n) {
-              this.ap.append("Invalid input. Enter a new input \n");
-            } catch (IllegalArgumentException e) {
-              this.ap.append("Invalid input. Enter a new input \n");
             }
           }
+          try {
+            model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
+          } catch (IllegalArgumentException a) {
+            this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
+          }
         }
-        try {
-          model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);
-        } catch (IllegalArgumentException a) {
-          this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
-          this.playGame(model);
-        }
-        this.playGame(model);
-      } else {
-        outputCondition(Output.Over, model);
+
       }
+        outputCondition(Output.Over, model);
+
     } catch (IOException e) {
       throw new IllegalStateException();
     }
