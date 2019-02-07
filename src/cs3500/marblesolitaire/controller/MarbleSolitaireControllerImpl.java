@@ -1,25 +1,33 @@
 package cs3500.marblesolitaire.controller;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import javax.imageio.IIOException;
-
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel;
-import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl;
-
 /*
 TODO:
 1. Remove throws IOException on playGame method
 2. Testing the method
 3. Throw catch for Readable and Appendable
  */
+
+/**
+ * Class implementation of MarbleSolitaireController. An object of MarbleSolitaireController that
+ * represents a controller for a game.
+ */
 public class MarbleSolitaireControllerImpl implements MarbleSolitaireController {
   private final Readable rd;
   private final Appendable ap;
 
+  /**
+   * Constructs a controller by taking in Readable and Appendable Readable and Appendable are two
+   * existing interfaces in Java that abstract input and output respectively.
+   *
+   * @param rd Interface in java that abstract input
+   * @param ap Interface in java that abstract output
+   * @throws IllegalArgumentException if Readable or Appendable is null
+   */
   public MarbleSolitaireControllerImpl(Readable rd, Appendable ap) throws IllegalArgumentException {
     if (rd == null || ap == null) {
       throw new IllegalArgumentException("Constructor Error");
@@ -28,7 +36,29 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
     this.ap = ap;
   }
 
-  private void outputCondition(Output o, MarbleSolitaireModel model) {
+  /**
+   * Method that gives out appropriate messages given the {@linkplain Output}
+   * <table>
+   * <thead>
+   * <tr>
+   * <th>Field</th>
+   * <th>Message</th>
+   * </tr>
+   * </thead>
+   * <tr>
+   * <td>Quit</td>
+   * <td>Gives out Message for when the user quits the game</td>
+   * </tr>
+   * <tr>
+   * <td>Over</td>
+   * <td>Gives out message for when the game is over</td>
+   * </tr>
+   * </table>
+   *
+   * @param o     A static field of enumeration class {@linkplain Output}
+   * @param model An object of MarbleSolitaireModel
+   */
+  protected void outputCondition(Output o, MarbleSolitaireModel model) {
     try {
       switch (o) {
         case Quit:
@@ -42,39 +72,13 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
           this.ap.append(model.getGameState() + "\n");
           this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
           break;
-        default :
+        default:
       }
-    }
-    catch (IOException e){
+    } catch (IOException e) {
       throw new IllegalStateException();
     }
   }
 
-//  private void inputCheck(int[] arr, int ind,MarbleSolitaireModel model) throws IOException {
-//    Scanner scan = new Scanner(this.rd);
-//    String scan1;
-//    boolean done = false;
-//    while (!done) {
-//      scan1 = scan.next();
-//      if (scan1.equals("Q") || scan1.equals("q")) {
-//        outputCondition(Output.Over, model);
-//        return;
-//      }
-//      try {
-//        if (Integer.parseInt(scan1) < 0) {
-//          throw new IllegalArgumentException();
-//        }
-//        arr[ind] = Integer.parseInt(scan1);
-//        done = true;
-//      } catch (NumberFormatException n) {
-//        this.ap.append("Invalid input. Enter a new input \n");
-//
-//      } catch (IllegalArgumentException e) {
-//        this.ap.append("Invalid input. Enter a new input \n");
-//
-//      }
-//    }
-//  }
   @Override
   public void playGame(MarbleSolitaireModel model) {
     try {
@@ -103,9 +107,9 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
                   arr[i] = Integer.parseInt(scan1);
                   done = true;
                 } catch (NumberFormatException n) {
-                  this.ap.append("Invalid input. Enter a new input \n");
+                  this.ap.append("Invalid input. Enter a new input\n");
                 } catch (IllegalArgumentException e) {
-                  this.ap.append("Invalid input. Enter a new input \n");
+                  this.ap.append("Invalid input. Enter a new input\n");
                 }
               }
             }
@@ -117,19 +121,11 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
           this.ap.append(String.format("Invalid move. Play again. %s", a) + "\n");
         }
       }
-        outputCondition(Output.Over, model);
-
+      outputCondition(Output.Over, model);
     } catch (IOException e) {
       throw new IllegalStateException();
-    }
-    catch (NoSuchElementException e) {
+    } catch (NoSuchElementException e) {
       throw new IllegalStateException();
     }
-  }
-}
-
-class test {
-  public static void main(String[] args) {
-      new MarbleSolitaireControllerImpl(new InputStreamReader(System.in), System.out).playGame(new MarbleSolitaireModelImpl());
   }
 }

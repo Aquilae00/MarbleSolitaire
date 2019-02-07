@@ -192,8 +192,8 @@ public final class MarbleSolitaireModelImpl implements MarbleSolitaireModel {
    * Initialize the board in the form of int arrays.
    * <table>
    * <thead>
-   * <td>Number</td>
-   * <td>String</td>
+   * <th>Number</th>
+   * <th>String</th>
    * </thead>
    * <tr><td>0</td><td>Represents " "</td></tr>
    * <tr><td>1</td><td>Represents "O"</td></tr>
