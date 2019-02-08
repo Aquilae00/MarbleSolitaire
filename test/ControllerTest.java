@@ -11,7 +11,7 @@ import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl;
 
 class test {
   public static void main(String[] args) {
-    new MarbleSolitaireControllerImpl(new InputStreamReader(System.in), System.out).playGame(new MarbleSolitaireModelImpl());
+    new MarbleSolitaireControllerImpl(new InputStreamReader(System.in), System.out).playGame(new MarbleSolitaireModelImpl(5));
   }
 }
 
@@ -19,6 +19,35 @@ public class ControllerTest {
   public ControllerTest() {
   }
 
+  @Test
+  public void testPlayGameDefaultQuit() {
+    StringBuffer out = new StringBuffer();
+    Reader in = new StringReader("q");
+    MarbleSolitaireController controller = new MarbleSolitaireControllerImpl(in, out);
+    controller.playGame(new MarbleSolitaireModelImpl());
+    StringBuilder string = new StringBuilder();
+    string.append(
+            "    O O O\n" +
+                    "    O O O\n" +
+                    "O O O O O O O\n" +
+                    "O O O _ O O O\n" +
+                    "O O O O O O O\n" +
+                    "    O O O\n" +
+                    "    O O O\n" +
+                    "Score: 32\n" +
+                    "Game quit!\n" +
+                    "State of game when quit:\n" +
+                    "    O O O\n" +
+                    "    O O O\n" +
+                    "O O O O O O O\n" +
+                    "O O O _ O O O\n" +
+                    "O O O O O O O\n" +
+                    "    O O O\n" +
+                    "    O O O\n" +
+                    "Score: 32\n"
+    );
+    Assert.assertEquals(string.toString(), out.toString());
+  }
   @Test
   public void testPlayGameDefaultMoveUpThenQuit() {
     StringBuffer out = new StringBuffer();
@@ -297,5 +326,12 @@ public class ControllerTest {
     Reader in = new StringReader("4 2 4 4 q");
     MarbleSolitaireController controller = new MarbleSolitaireControllerImpl(in, out);
     controller.playGame(null);
+  }
+  @Test (expected = IllegalStateException.class)
+  public void testPlayGameDefaultNullInput() {
+    StringBuffer out = new StringBuffer();
+    Reader in = new StringReader("null");
+    MarbleSolitaireController controller = new MarbleSolitaireControllerImpl(in, out);
+    controller.playGame(new MarbleSolitaireModelImpl());
   }
 }
