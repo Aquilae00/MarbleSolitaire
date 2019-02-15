@@ -9,7 +9,7 @@ import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModelImpl;
 public class MarbleSolitaireModelGetScoreTest {
   MarbleSolitaireModel m0 = new MarbleSolitaireModelImpl();
   MarbleSolitaireModel m2 = new MarbleSolitaireModelImpl(5);
-  MarbleSolitaireModel m3 = new MarbleSolitaireModelImpl("Zero");
+
 
   @Test
   public void testGetScore1() {
@@ -28,13 +28,5 @@ public class MarbleSolitaireModelGetScoreTest {
   @Test
   public void testGetScore3() {
     assertEquals(104, m2.getScore());
-  }
-
-  /*
-  Get score of empty board
-   */
-  @Test
-  public void testGetScore4() {
-    assertEquals(0, m3.getScore());
   }
 }

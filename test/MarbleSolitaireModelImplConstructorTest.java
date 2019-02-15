@@ -11,31 +11,65 @@ public class MarbleSolitaireModelImplConstructorTest {
   MarbleSolitaireModel m2 = new MarbleSolitaireModelImpl(5);
   MarbleSolitaireModel m3 = new MarbleSolitaireModelImpl(5, 3, 6);
   MarbleSolitaireModel m4 = new MarbleSolitaireModelImpl(0, 2);
-  MarbleSolitaireModel m5 = new MarbleSolitaireModelImpl("Zero");
 
 
   @Test
   public void testMarbleSolitaireModelImplConstructor1() {
-    assertEquals(m0.getGameState(), m0.getGameState());
-    System.out.println(m0.getGameState());
+    assertEquals(
+            "    O O O\n" +
+                    "    O O O\n" +
+                    "O O O O O O O\n" +
+                    "O O O _ O O O\n" +
+                    "O O O O O O O\n" +
+                    "    O O O\n" +
+                    "    O O O", m0.getGameState());
   }
 
   @Test
   public void testMarbleSolitaireModelImplConstructor2() {
-    assertEquals(m1.getGameState(), m1.getGameState());
-    System.out.println(m1.getGameState());
+    assertEquals(
+            "    O O O\n" +
+                    "    O O O\n" +
+                    "O O O O O O O\n" +
+                    "O O O O O O _\n" +
+                    "O O O O O O O\n" +
+                    "    O O O\n" +
+                    "    O O O", m1.getGameState());
   }
 
   @Test
   public void testMarbleSolitaireModelImplConstructor3() {
-    assertEquals(m2.getGameState(), m2.getGameState());
-    System.out.println(m2.getGameState());
+    assertEquals(
+            "        O O O O O\n" +
+                    "        O O O O O\n" +
+                    "        O O O O O\n" +
+                    "        O O O O O\n" +
+                    "O O O O O O O O O O O O O\n" +
+                    "O O O O O O O O O O O O O\n" +
+                    "O O O O O O _ O O O O O O\n" +
+                    "O O O O O O O O O O O O O\n" +
+                    "O O O O O O O O O O O O O\n" +
+                    "        O O O O O\n" +
+                    "        O O O O O\n" +
+                    "        O O O O O\n" +
+                    "        O O O O O", m2.getGameState());
   }
 
   @Test
   public void testMarbleSolitaireModelImplConstructor4() {
-    assertEquals(m3.getGameState(), m3.getGameState());
-    System.out.println(m3.getGameState());
+    assertEquals("        O O O O O\n" +
+            "        O O O O O\n" +
+            "        O O O O O\n" +
+            "        O O _ O O\n" +
+            "O O O O O O O O O O O O O\n" +
+            "O O O O O O O O O O O O O\n" +
+            "O O O O O O O O O O O O O\n" +
+            "O O O O O O O O O O O O O\n" +
+            "O O O O O O O O O O O O O\n" +
+            "        O O O O O\n" +
+            "        O O O O O\n" +
+            "        O O O O O\n" +
+            "        O O O O O", m3.getGameState());
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -84,12 +118,4 @@ public class MarbleSolitaireModelImplConstructorTest {
     assertEquals(new IllegalArgumentException(), new MarbleSolitaireModelImpl(0, 0, 0));
   }
 
-  /*
-  Empty Board construction
-   */
-  @Test
-  public void testMarbleSolitaireModelImplConstructor14() {
-    assertEquals(m5, m5);
-    System.out.println(m5.getGameState());
-  }
 }

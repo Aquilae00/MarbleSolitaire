@@ -5,12 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel;
-/*
-TODO:
-1. Remove throws IOException on playGame method
-2. Testing the method
-3. Throw catch for Readable and Appendable
- */
 
 /**
  * Class implementation of MarbleSolitaireController. An object of MarbleSolitaireController that
@@ -40,25 +34,16 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
    * Method that gives out appropriate messages given the {@linkplain Output}
    * <table>
    * <thead>
-   * <tr>
-   * <th>Field</th>
-   * <th>Message</th>
-   * </tr>
+   * <tr><th>Field</th><th>Message</th></tr>
    * </thead>
-   * <tr>
-   * <td>Quit</td>
-   * <td>Gives out Message for when the user quits the game</td>
-   * </tr>
-   * <tr>
-   * <td>Over</td>
-   * <td>Gives out message for when the game is over</td>
-   * </tr>
+   * <tr><td>Quit</td><td>Gives out Message for when the user quits the game</td></tr>
+   * <tr><td>Over</td><td>Gives out message for when the game is over</td></tr>
    * </table>
    *
    * @param o     A static field of enumeration class {@linkplain Output}
    * @param model An object of MarbleSolitaireModel
    */
-  protected void outputCondition(Output o, MarbleSolitaireModel model) {
+  private void outputCondition(Output o, MarbleSolitaireModel model) {
     try {
       switch (o) {
         case Quit:
@@ -79,6 +64,11 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
     }
   }
 
+  /**
+   * Removed if condition asking for game over.
+   * Moved if condition for quit game input to NumberFormatException
+   * @param model an object of MarbleSolitaireModel
+   */
   @Override
   public void playGame(MarbleSolitaireModel model) {
     try {
@@ -91,27 +81,25 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       while (!model.isGameOver()) {
         this.ap.append(model.getGameState() + "\n");
         this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-        if (!model.isGameOver()) {
-          for (int i = 0; i < arr.length; i++) {
-            boolean done = false;
-            while (!done) {
-              scan1 = scan.next();
+        for (int i = 0; i < arr.length; i++) {
+          boolean done = false;
+          while (!done) {
+            scan1 = scan.next();
+            try {
+              if (Integer.parseInt(scan1) < 0) {
+                throw new IllegalArgumentException();
+              }
+              arr[i] = Integer.parseInt(scan1);
+              done = true;
+            } catch (NumberFormatException n) {
               if (scan1.equals("Q") || scan1.equals("q")) {
                 outputCondition(Output.Quit, model);
                 return;
               } else {
-                try {
-                  if (Integer.parseInt(scan1) < 0) {
-                    throw new IllegalArgumentException();
-                  }
-                  arr[i] = Integer.parseInt(scan1);
-                  done = true;
-                } catch (NumberFormatException n) {
-                  this.ap.append("Invalid input. Enter a new input\n");
-                } catch (IllegalArgumentException e) {
-                  this.ap.append("Invalid input. Enter a new input\n");
-                }
+                this.ap.append("Invalid input. Enter a new input\n");
               }
+            } catch (IllegalArgumentException e) {
+              this.ap.append("Invalid input. Enter a new input\n");
             }
           }
         }
