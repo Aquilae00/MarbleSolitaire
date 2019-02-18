@@ -1,7 +1,6 @@
 package cs3500.marblesolitaire.model.hw02;
 
 import cs3500.marblesolitaire.model.hw04.AbstractSolitaireModel;
-import cs3500.marblesolitaire.model.hw04.Model;
 
 /**
  * Class implementation of MarbleSolitaireModel.
@@ -58,7 +57,14 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
       throw new IllegalArgumentException("Invalid Input");
     }
     this.arm = armLength;
-    super.init(Model.Original);
+    front_gap = this.arm - 1;
+    width = 3 * this.arm - 2;
+    last_slot = width - front_gap;
+    edge_gap = this.arm - 1;
+    last_slot_edge = last_slot;
+
+    v_gap = this.arm - 1;
+    height = v_gap * 2 + this.arm;
     if (row == DEFAULT_SROW && col == DEFAULT_SCOL) {
       this.scol = this.arm + this.arm / 2 - 1;
       this.srow = this.arm - 1 + this.arm / 2;
@@ -76,7 +82,6 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
       throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
               srow, scol));
     }
-
     this.board_state = initBoard();
   }
 }
