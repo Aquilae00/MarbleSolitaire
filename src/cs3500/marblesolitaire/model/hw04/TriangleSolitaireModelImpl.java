@@ -3,27 +3,29 @@ package cs3500.marblesolitaire.model.hw04;
 import cs3500.marblesolitaire.model.hw02.Coding;
 
 public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
+
   public TriangleSolitaireModelImpl(){
     this(5,0,0);
   }
 
-  public TriangleSolitaireModelImpl(int armLength) {
-    this(armLength,0,0);
+  public TriangleSolitaireModelImpl(int dimension) {
+    this(dimension,0,0);
   }
 
   public TriangleSolitaireModelImpl(int row,int col) {
     this(5,row,col);
   }
 
-  public TriangleSolitaireModelImpl(int armLength, int row, int col) {
-    if (armLength < 0
-            || armLength % 2 == 0
+  public TriangleSolitaireModelImpl(int dimension, int row, int col) {
+    if (dimension < 0
+            || dimension% 2 == 0
             || row < 0
             || col < 0) {
       throw new IllegalArgumentException("Invalid Input");
     }
 
-    this.arm = armLength;
+    //Arm = Dimension
+    this.arm = dimension;
     front_gap = this.arm - 1;
     width = this.arm;
     last_slot = width - front_gap;
@@ -106,6 +108,8 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
   }
 
   protected boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
+    int jumped_over_v = (toCol + fromCol) / 2;
+    int jumped_over_h = (toRow + fromRow) / 2;
     return toRow < 0
             || toCol < 0
             || fromCol < 0
@@ -118,7 +122,8 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
             || Math.abs(toRow - fromRow) != 2 && Math.abs(toRow - fromRow) != 0
-            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0;
+            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0
+;
   }
 
   @Override
@@ -141,38 +146,11 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
       if (toCol == fromCol) {
         this.board_state[jumped_over_h][toCol] = Coding.Empty;
       }
+      if (Math.abs(toCol - fromCol) == 2 && Math.abs(toRow - fromRow) == 2) {
+        this.board_state[jumped_over_h][jumped_over_v] = Coding.Empty;
+      }
       this.board_state[fromRow][fromCol] = Coding.Empty;
       this.board_state[toRow][toCol] = Coding.Marbles;
     }
-  }
-
-  @Override
-  public boolean isGameOver() {
-    boolean condition = true;
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        if (board_state[x][y] == Coding.Marbles) {
-          condition = condition && !(x < last_slot
-                  && board_state[x + 2][y] == Coding.Empty
-                  && board_state[x + 1][y] == Coding.Marbles);
-          condition = condition && !(x > 1
-                  && board_state[x - 2][y] == Coding.Empty
-                  && board_state[x - 1][y] == Coding.Marbles);
-          condition = condition && !(y < last_slot
-                  && board_state[x][y + 2] == Coding.Empty
-                  && board_state[x][y + 1] == Coding.Marbles);
-          condition = condition && !(y > 1
-                  && board_state[x][y - 2] == Coding.Empty
-                  && board_state[x][y - 1] == Coding.Marbles);
-          condition = condition && !(y > 1
-                  && board_state[x - 2][y - 2] == Coding.Empty
-                  && board_state[x - 1][y - 1] == Coding.Marbles);
-          condition = condition && !(y < last_slot
-                  && board_state[x + 2][y + 2] == Coding.Empty
-                  && board_state[x + 1][y + 1] == Coding.Marbles);
-        }
-      }
-    }
-    return condition;
   }
 }

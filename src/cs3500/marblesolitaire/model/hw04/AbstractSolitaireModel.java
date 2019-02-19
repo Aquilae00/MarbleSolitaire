@@ -16,6 +16,7 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
   protected int last_slot;
   protected int v_gap;
   protected int height;
+  //Variant and invariant are for determining the pyramid edges
   protected int variant;
   protected int invariant;
   protected static final int DEFAULT_ARM = 3;
@@ -37,6 +38,8 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
    * @return true if the positions are invalid, false if positions are valid
    */
   protected boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
+    int jumped_over_v = (toCol + fromCol) / 2;
+    int jumped_over_h = (toRow + fromRow) / 2;
     return toRow < 0
             || toCol < 0
             || fromCol < 0
@@ -53,7 +56,9 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
             || Math.abs(toRow - fromRow) != 2 && Math.abs(toRow - fromRow) != 0
-            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0;
+            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0
+            || this.board_state[fromRow][jumped_over_v] != Coding.Marbles
+            || this.board_state[jumped_over_h][fromCol] != Coding.Marbles;
   }
 
   /**
@@ -98,13 +103,13 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         if (board_state[x][y] == Coding.Marbles) {
-          condition = condition && !(x < last_slot
+          condition = condition && !(x < width - 2
                   && board_state[x + 2][y] == Coding.Empty
                   && board_state[x + 1][y] == Coding.Marbles);
           condition = condition && !(x > 1
                   && board_state[x - 2][y] == Coding.Empty
                   && board_state[x - 1][y] == Coding.Marbles);
-          condition = condition && !(y < last_slot
+          condition = condition && !(y < height - 2
                   && board_state[x][y + 2] == Coding.Empty
                   && board_state[x][y + 1] == Coding.Marbles);
           condition = condition && !(y > 1
