@@ -60,8 +60,8 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
     front_gap = this.arm - 1;
     width = 3 * this.arm - 2;
     last_slot = width - front_gap;
-    edge_gap = this.arm - 1;
-    last_slot_edge = last_slot;
+    variant = 0;
+    invariant = 1;
 
     v_gap = this.arm - 1;
     height = v_gap * 2 + this.arm;

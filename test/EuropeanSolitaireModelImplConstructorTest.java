@@ -6,7 +6,8 @@ import cs3500.marblesolitaire.model.hw04.EuropeanSolitaireModelImpl;
 public class EuropeanSolitaireModelImplConstructorTest {
   MarbleSolitaireModel m1 = new EuropeanSolitaireModelImpl();
   MarbleSolitaireModel m2 = new EuropeanSolitaireModelImpl(5);
-  MarbleSolitaireModel m3 = new EuropeanSolitaireModelImpl(3,3,3);
+  MarbleSolitaireModel m3 = new EuropeanSolitaireModelImpl(1,5);
+  MarbleSolitaireModel m4 = new EuropeanSolitaireModelImpl(3,3,3);
 
   @Test
   public void testConstructor3() {
