@@ -78,6 +78,8 @@ public class MarbleSolitaireModelImplMoveTest {
     System.out.println(m3.getGameState());
   }
 
+
+
   /*
   Invalid positions move
    */

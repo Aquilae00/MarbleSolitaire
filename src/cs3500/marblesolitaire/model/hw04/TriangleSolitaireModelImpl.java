@@ -145,4 +145,34 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
       this.board_state[toRow][toCol] = Coding.Marbles;
     }
   }
+
+  @Override
+  public boolean isGameOver() {
+    boolean condition = true;
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        if (board_state[x][y] == Coding.Marbles) {
+          condition = condition && !(x < last_slot
+                  && board_state[x + 2][y] == Coding.Empty
+                  && board_state[x + 1][y] == Coding.Marbles);
+          condition = condition && !(x > 1
+                  && board_state[x - 2][y] == Coding.Empty
+                  && board_state[x - 1][y] == Coding.Marbles);
+          condition = condition && !(y < last_slot
+                  && board_state[x][y + 2] == Coding.Empty
+                  && board_state[x][y + 1] == Coding.Marbles);
+          condition = condition && !(y > 1
+                  && board_state[x][y - 2] == Coding.Empty
+                  && board_state[x][y - 1] == Coding.Marbles);
+          condition = condition && !(y > 1
+                  && board_state[x - 2][y - 2] == Coding.Empty
+                  && board_state[x - 1][y - 1] == Coding.Marbles);
+          condition = condition && !(y < last_slot
+                  && board_state[x + 2][y + 2] == Coding.Empty
+                  && board_state[x + 1][y + 1] == Coding.Marbles);
+        }
+      }
+    }
+    return condition;
+  }
 }

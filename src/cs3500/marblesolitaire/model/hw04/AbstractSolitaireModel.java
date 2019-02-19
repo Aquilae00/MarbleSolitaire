@@ -49,7 +49,7 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
             || toCol < front_gap && toRow >= height - v_gap
             || toCol >= width - front_gap && toRow < v_gap
             || toCol >= width - front_gap && toRow >= height - v_gap
-            || Math.abs(toRow - fromRow) == 1 && Math.abs(toCol - fromCol) == 1
+            || Math.abs(toRow - fromRow) >= 1 && Math.abs(toCol - fromCol) >= 1
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
             || Math.abs(toRow - fromRow) != 2 && Math.abs(toRow - fromRow) != 0
