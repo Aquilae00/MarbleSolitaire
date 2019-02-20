@@ -12,18 +12,30 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
     this(dimension,0,0);
   }
 
+  /**
+   * Constructs a Triangular Marble solitaire that takes in empty slot at the specified row and
+   * col
+   * @param row the y axis of empty slot
+   * @param col the x axis of empty slot
+   */
   public TriangleSolitaireModelImpl(int row,int col) {
     this(5,row,col);
   }
 
+  /**
+   * Constructs a Triangular marble solitaire that takes in specified dimension and an empty slot
+   * at the specified row and column
+   * @param dimension number of slots in the bottom-most row
+   * @param row the y axis of empty slot
+   * @param col the x axis of empty slot
+   * @throws IllegalArgumentException if the dimension is non-positive or the position is invalid
+   */
   public TriangleSolitaireModelImpl(int dimension, int row, int col) {
     if (dimension < 0
-            || dimension% 2 == 0
             || row < 0
             || col < 0) {
       throw new IllegalArgumentException("Invalid Input");
     }
-
     //Arm = Dimension
     this.arm = dimension;
     front_gap = this.arm - 1;
@@ -37,6 +49,7 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
     this.srow = row;
     this.scol = col;
     this.board_state = initBoard();
+
   }
 
   @Override
@@ -52,7 +65,13 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
       }
       variant++;
     }
-    board[this.srow][this.scol] = Coding.Empty;
+    if (board[srow][scol] == Coding.Invalid
+    || board[srow][scol] == Coding.OutofBound) {
+      throw new IllegalArgumentException("Invalid Position");
+    }
+    else {
+      board[this.srow][this.scol] = Coding.Empty;
+    }
     return board;
   }
 
@@ -70,7 +89,6 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
             string_board.append("  ");
             break;
           case Marbles:
-
               while(num1 != 0) {
                 string_board.append(" ");
                 num1--;
@@ -108,8 +126,6 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
   }
 
   protected boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
-    int jumped_over_v = (toCol + fromCol) / 2;
-    int jumped_over_h = (toRow + fromRow) / 2;
     return toRow < 0
             || toCol < 0
             || fromCol < 0
@@ -122,20 +138,17 @@ public class TriangleSolitaireModelImpl extends  AbstractSolitaireModel{
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
             || Math.abs(toRow - fromRow) != 2 && Math.abs(toRow - fromRow) != 0
-            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0
-;
+            || Math.abs(toCol - fromCol) != 2 && Math.abs(toCol - fromCol) != 0;
   }
 
   @Override
   public void move(int fromRow, int fromCol, int toRow, int toCol) throws IllegalArgumentException {
     int jumped_over_v = (toCol + fromCol) / 2;
     int jumped_over_h = (toRow + fromRow) / 2;
-
     if (isInvalidMove(fromRow, fromCol, toRow, toCol)) {
       throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
               toRow, toCol));
     }
-
     if (this.board_state[fromRow][fromCol] == Coding.Marbles
             && Math.abs(toRow - fromRow) <= 2
             && Math.abs(toCol - fromCol) <= 2

@@ -14,22 +14,22 @@ public class MarbleSolitaireModelImplMoveTest {
   MarbleSolitaireModel m5 = new MarbleSolitaireModelImpl(0, 2);
 
   /*
-  Moving down from (0,4)
+  Moving up from (0,4)
    */
   @Test
   public void testMarbleSolitaireModelImplMove0() {
     assertEquals(m0.getGameState(), m0.getGameState());
-    m5.move(0, 4, 0, 2);
+    m5.move(2, 2, 0, 2);
     System.out.println(m5.getGameState());
   }
 
   /*
-  Moving up
+  Moving down
    */
   @Test
   public void testMarbleSolitaireModelImplMove1() {
     assertEquals(m1.getGameState(), m1.getGameState());
-    m0.move(3, 5, 3, 3);
+    m0.move(1, 3, 3, 3);
     System.out.println(m0.getGameState());
   }
 
@@ -148,5 +148,15 @@ public class MarbleSolitaireModelImplMoveTest {
   @Test(expected = IllegalArgumentException.class)
   public void testMarbleSolitaireModelImplMove() {
     m0.move(2, 2, 3, 3);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testMarbleSolitaireModelImplMoveFromEmpty() {
+    m1.move(3, 3, 5, 3);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testMarbleSolitaireModelImplMoveEmptyMiddle() {
+    m1.move(3, 4, 3, 2);
   }
 }
