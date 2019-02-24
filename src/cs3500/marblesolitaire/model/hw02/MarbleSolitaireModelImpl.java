@@ -8,7 +8,6 @@ import cs3500.marblesolitaire.model.hw04.AbstractSolitaireModel;
 public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
 
 
-
   /**
    * Constructs a Marble Solitaire Model using default values.
    */
@@ -32,11 +31,11 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
    * Constructs a Marble Solitaire Model and initialize a game board with the empty slot at the
    * center.
    *
-   * @param thicc the arm thickness
+   * @param armLength the arm thickness
    * @throws IllegalArgumentException if the arm thickness is not a positive odd number
    */
-  public MarbleSolitaireModelImpl(int thicc) {
-    this(thicc, DEFAULT_SROW, DEFAULT_SCOL);
+  public MarbleSolitaireModelImpl(int armLength) {
+    this(armLength, DEFAULT_SROW, DEFAULT_SCOL);
   }
 
   /**
@@ -44,18 +43,13 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
    * in that order.
    *
    * @param armLength the arm thickness
-   * @param row        the y axis of empty slot
-   * @param col        the x axis of empty slot
+   * @param row       the y axis of empty slot
+   * @param col       the x axis of empty slot
    * @throws IllegalArgumentException if the arm thickness is not a positive odd number, or the
    *                                  empty cell position is invalid
    */
   public MarbleSolitaireModelImpl(int armLength, int row, int col) {
-    if (armLength < 0
-            || armLength % 2 == 0
-            || row < 0
-            || col < 0) {
-      throw new IllegalArgumentException("Invalid Input");
-    }
+
     this.arm = armLength;
     front_gap = this.arm - 1;
     width = 3 * this.arm - 2;
@@ -65,6 +59,14 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
 
     v_gap = this.arm - 1;
     height = v_gap * 2 + this.arm;
+    if (armLength < 0
+            || armLength % 2 == 0
+            || row < 0
+            || col < 0
+            || row > height - 1
+            || col > width - 1) {
+      throw new IllegalArgumentException("Invalid Input");
+    }
     if (row == DEFAULT_SROW && col == DEFAULT_SCOL) {
       this.scol = this.arm + this.arm / 2 - 1;
       this.srow = this.arm - 1 + this.arm / 2;
@@ -73,14 +75,6 @@ public final class MarbleSolitaireModelImpl extends AbstractSolitaireModel {
       this.srow = row;
       this.scol = col;
 
-    }
-    if (srow >= this.height
-            || scol < front_gap && srow < v_gap
-            || scol < front_gap && srow >= height - v_gap
-            || scol >= width - front_gap && srow < v_gap
-            || scol >= width - front_gap && srow >= height - v_gap) {
-      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
-              srow, scol));
     }
     this.board_state = initBoard();
   }

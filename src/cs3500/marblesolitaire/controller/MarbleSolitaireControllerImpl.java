@@ -31,7 +31,7 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
   }
 
   /**
-   * Method that gives out appropriate messages given the {@linkplain Output}
+   * Method that gives out appropriate messages given the {@linkplain Output}.
    * <table>
    * <thead>
    * <tr><th>Field</th><th>Message</th></tr>
@@ -65,8 +65,9 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
   }
 
   /**
-   * Removed if condition asking for game over.
-   * Moved if condition for quit game input to NumberFormatException
+   * Removed if condition asking for game over. Moved if condition for quit game input to
+   * NumberFormatException
+   *
    * @param model an object of MarbleSolitaireModel
    */
   @Override
@@ -81,24 +82,24 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       while (!model.isGameOver()) {
         this.ap.append(model.getGameState() + "\n");
         this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-        for (int i = 0; i < arr.length;) {
-            scan1 = scan.next();
-            try {
-              if (Integer.parseInt(scan1) < 0) {
-                throw new IllegalArgumentException();
-              }
-              arr[i] = Integer.parseInt(scan1);
-              i++;
-            } catch (NumberFormatException n) {
-              if (scan1.equals("Q") || scan1.equals("q")) {
-                outputCondition(Output.Quit, model);
-                return;
-              } else {
-                this.ap.append("Invalid input. Enter a new input\n");
-              }
-            } catch (IllegalArgumentException e) {
+        for (int i = 0; i < arr.length; ) {
+          scan1 = scan.next();
+          try {
+            if (Integer.parseInt(scan1) < 0) {
+              throw new IllegalArgumentException();
+            }
+            arr[i] = Integer.parseInt(scan1);
+            i++;
+          } catch (NumberFormatException n) {
+            if (scan1.equals("Q") || scan1.equals("q")) {
+              outputCondition(Output.Quit, model);
+              return;
+            } else {
               this.ap.append("Invalid input. Enter a new input\n");
             }
+          } catch (IllegalArgumentException e) {
+            this.ap.append("Invalid input. Enter a new input\n");
+          }
         }
         try {
           model.move(arr[0] - 1, arr[1] - 1, arr[2] - 1, arr[3] - 1);

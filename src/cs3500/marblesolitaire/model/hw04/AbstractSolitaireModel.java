@@ -4,7 +4,7 @@ import cs3500.marblesolitaire.model.hw02.Coding;
 import cs3500.marblesolitaire.model.hw02.MarbleSolitaireModel;
 
 /**
- * Class abstraction for Solitaire Model !!!IMPORTANT!!! DO NOT OVERRIDE init() AND init_board()
+ * Class abstraction for Solitaire Model for Objects of MarbleSolitaireModel.
  */
 public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
   protected Coding[][] board_state;
@@ -37,7 +37,7 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
    * @param toCol   the column number of the position to be moved to (starts at 0)
    * @return true if the positions are invalid, false if positions are valid
    */
-  protected boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
+  private boolean isInvalidMove(int fromRow, int fromCol, int toRow, int toCol) {
     int jumped_over_v = (toCol + fromCol) / 2;
     int jumped_over_h = (toRow + fromRow) / 2;
     return toRow < 0
@@ -48,10 +48,6 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
             || toCol > width - 1
             || fromCol > width - 1
             || fromRow > height - 1
-            || toCol < front_gap && toRow < v_gap
-            || toCol < front_gap && toRow >= height - v_gap
-            || toCol >= width - front_gap && toRow < v_gap
-            || toCol >= width - front_gap && toRow >= height - v_gap
             || Math.abs(toRow - fromRow) >= 1 && Math.abs(toCol - fromCol) >= 1
             || this.board_state[toRow][toCol] != Coding.Empty
             || this.board_state[fromRow][fromCol] != Coding.Marbles
@@ -122,20 +118,23 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
   }
 
   /**
-   * Initialize the board in the form of int arrays.
+   * Initialize the board in the form of Coding Enumerations.
    * <table>
    * <thead>
    * <th>Number</th><th>String</th>
    * </thead>
-   * <tr><td>0</td><td>Represents " "</td></tr>
-   * <tr><td>1</td><td>Represents "O"</td></tr>
-   * <tr><td>2</td><td>Represents "_"</td></tr>
-   * <tr><td>3</td><td>Represents "" (Nothing)</td></tr>
+   * <tr><td>Invalid</td><td>Represents " "</td></tr>
+   * <tr><td>Marbles</td><td>Represents "O"</td></tr>
+   * <tr><td>Empty</td><td>Represents "_"</td></tr>
+   * <tr><td>OutOfBound</td><td>Represents "" (Nothing)</td></tr>
    * </table>
    *
-   * Version change:
-   *
-   * @return the board in form of int arrays
+   * <p>
+   * Version change: Added the use of variant and invariant. The purpose is to give the model the
+   * ability to customize the board with respect to model type, constructs the board with
+   * diminishing number of edges for European and Triangle Edges
+   * </p>
+   * @return the board in form of Coding enumeration
    */
   protected Coding[][] initBoard() {
     int original_invariant = this.invariant;
@@ -162,9 +161,9 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
         invariant = this.arm;
       }
     }
-    if (board[srow][scol] == Coding.Invalid) {
-      throw new IllegalArgumentException(String.format("Invalid empty cell position (%s,%s)",
-              srow, scol));
+    if (board[srow][scol] == Coding.Invalid
+            || board[srow][scol] == Coding.OutofBound) {
+      throw new IllegalArgumentException("Invalid Position");
     } else {
       board[this.srow][this.scol] = Coding.Empty;
     }
