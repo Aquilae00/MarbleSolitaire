@@ -82,7 +82,8 @@ public class MarbleSolitaireControllerImpl implements MarbleSolitaireController 
       while (!model.isGameOver()) {
         this.ap.append(model.getGameState() + "\n");
         this.ap.append(String.format("Score: %s", model.getScore()) + "\n");
-        for (int i = 0; i < arr.length; ) {
+        for (int i = 0; i < arr.length; )
+        {
           scan1 = scan.next();
           try {
             if (Integer.parseInt(scan1) < 0) {

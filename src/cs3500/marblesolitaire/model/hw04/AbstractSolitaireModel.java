@@ -217,4 +217,9 @@ public abstract class AbstractSolitaireModel implements MarbleSolitaireModel {
     }
     return score;
   }
+
+  @Override
+  public Coding[][] getBoard() {
+    return this.board_state;
+  }
 }

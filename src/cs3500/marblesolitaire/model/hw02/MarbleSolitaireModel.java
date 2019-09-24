@@ -42,4 +42,6 @@ public interface MarbleSolitaireModel {
    * @return the number of marbles currently on the board
    */
   int getScore();
+
+  Coding[][] getBoard();
 }
